@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Suggestions Input Box</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f4f4f4;
+        }
+        .container {
+            position: relative;
+            width: 300px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .suggestions {
+            position: absolute;
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        .suggestions div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .suggestions div:hover {
+            background: #ddd;
+        }
+        .highlight {
+            font-weight: bold;
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <input type="text" id="search" placeholder="Type a city..." autocomplete="off" />
+        <div class="suggestions" id="suggestions"></div>
+    </div>
+
+    <script>
+        const cities = ["New York", "New Jersey", "New Orleans", "Los Angeles", "San Francisco", "Chicago", "Miami", "Seattle", "Houston", "Denver"];
+
+        const searchInput = document.getElementById("search");
+        const suggestionsBox = document.getElementById("suggestions");
+
+        function filterCities(query) {
+            return cities.filter(city => city.toLowerCase().includes(query.toLowerCase()));
+        }
+
+        function highlightMatch(text, query) {
+            const regex = new RegExp(`(${query})`, "gi");
+            return text.replace(regex, `<span class="highlight">$1</span>`);
+        }
+
+        function showSuggestions() {
+            const query = searchInput.value.trim();
+            suggestionsBox.innerHTML = "";
+            
+            if (query === "") {
+                suggestionsBox.style.display = "none";
+                return;
+            }
+
+            const matchedCities = filterCities(query);
+
+            if (matchedCities.length === 0) {
+                suggestionsBox.innerHTML = "<div>No results found</div>";
+            } else {
+                matchedCities.forEach(city => {
+                    const div = document.createElement("div");
+                    div.innerHTML = highlightMatch(city, query);
+                    div.addEventListener("click", () => {
+                        searchInput.value = city;
+                        suggestionsBox.style.display = "none";
+                    });
+                    suggestionsBox.appendChild(div);
+                });
+            }
+
+            suggestionsBox.style.display = "block";
+        }
+
+        searchInput.addEventListener("input", showSuggestions);
+        searchInput.addEventListener("blur", () => setTimeout(() => suggestionsBox.style.display = "none", 200));
+
+        // Keyboard Navigation
+        let selectedIndex = -1;
+        searchInput.addEventListener("keydown", (e) => {
+            const items = document.querySelectorAll(".suggestions div");
+            if (items.length === 0) return;
+
+            if (e.key === "ArrowDown") {
+                selectedIndex = (selectedIndex + 1) % items.length;
+            } else if (e.key === "ArrowUp") {
+                selectedIndex = (selectedIndex - 1 + items.length) % items.length;
+            } else if (e.key === "Enter" && selectedIndex >= 0) {
+                searchInput.value = items[selectedIndex].textContent;
+                suggestionsBox.style.display = "none";
+                selectedIndex = -1;
+            }
+
+            items.forEach((item, index) => {
+                item.style.background = index === selectedIndex ? "#ddd" : "white";
+            });
+        });
+    </script>
+
+</body>
+</html>
