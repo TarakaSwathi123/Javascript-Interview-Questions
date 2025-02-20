@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag & Drop Task Board</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .board {
+            display: flex;
+            gap: 20px;
+            width: 80%;
+        }
+        .column {
+            flex: 1;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            min-height: 300px;
+        }
+        .column h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .task {
+            padding: 10px;
+            margin: 10px 0;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            cursor: grab;
+            border-radius: 5px;
+        }
+        .dragging {
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="board">
+        <div class="column" id="will-start">
+            <h2>Will Start</h2>
+            <div class="task" draggable="true">Task 1</div>
+            <div class="task" draggable="true">Task 2</div>
+        </div>
+        <div class="column" id="ongoing">
+            <h2>Ongoing</h2>
+            <div class="task" draggable="true">Task 3</div>
+            <div class="task" draggable="true">Task 4</div>
+        </div>
+        <div class="column" id="completed">
+            <h2>Completed</h2>
+            <div class="task" draggable="true">Task 5</div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = document.querySelectorAll(".task");
+        const columns = document.querySelectorAll(".column");
+
+        let draggedTask = null;
+
+        tasks.forEach(task => {
+            task.addEventListener("dragstart", (e) => {
+                draggedTask = task;
+                task.classList.add("dragging");
+                setTimeout(() => (task.style.display = "none"), 0);
+            });
+
+            task.addEventListener("dragend", () => {
+                draggedTask.classList.remove("dragging");
+                draggedTask.style.display = "block";
+                draggedTask = null;
+            });
+        });
+
+        columns.forEach(column => {
+            column.addEventListener("dragover", (e) => {
+                e.preventDefault();
+            });
+
+            column.addEventListener("drop", () => {
+                if (draggedTask) {
+                    column.appendChild(draggedTask);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
