@@ -134,11 +134,3 @@ A carefully curated list of 100 essential JavaScript interview questions for L1 
 98. What is the output of: `3 + 2 + "7"`?
 99. What are service workers?
 100. What’s the difference between authentication and authorization?
-
----
-
-✅ **Tip**: Try writing small code snippets for each question to solidify your understanding.
-
-Feel free to fork, clone, or contribute to this list. Happy Coding! 🚀
-
-#javascript #frontend #interview #react #vue #angular #webdev #typescript #coding
